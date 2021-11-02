@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   View,
   Image,
+  Pressable
 } from "react-native";
 import Button from "./components/Button";
 import Day from "./components/Day";
@@ -47,6 +48,10 @@ const DateRangePicker = ({
   buttonTextStyle,
   presetButtons,
   open,
+  confirm,
+  cancel,
+  confirmText,
+  cancelText,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [weeks, setWeeks] = useState([]);
@@ -219,7 +224,7 @@ const DateRangePicker = ({
     function populateHeaders() {
       let _dayHeaders = [];
       for (let i = 0; i <= 6; ++i) {
-        let day = _moment(displayedDate).weekday(i).format("dddd").substr(0, 2);
+        let day = _moment(displayedDate).weekday(i).format("dd - DD/MM/YYYY").substr(0, 2);
         _dayHeaders.push(
           <Header
             key={`dayHeader-${i}`}
@@ -325,10 +330,10 @@ const DateRangePicker = ({
 
   return isOpen ? (
     <>
-      <View style={mergedStyles.backdrop}>
+      <View style={mergedStyles.backdrop} >
         <TouchableWithoutFeedback
           style={styles.closeTrigger}
-          onPress={_onClose}
+          onPress={cancel}
         >
           <View style={styles.closeContainer} />
         </TouchableWithoutFeedback>
@@ -365,6 +370,16 @@ const DateRangePicker = ({
               )}
               {weeks}
             </View>
+            <View style={styles.buttonWrapper}>
+              <Button 
+                children={cancelText ?? "Cancel"} 
+                onPress={cancel} buttonStyle={styles.cancel} 
+                buttonTextStyle={styles.cancelText} />
+              <Button 
+                children={confirmText ?? "Confirm"} 
+                onPress={confirm} buttonStyle={styles.confirm} 
+                buttonTextStyle={styles.confirmText} />
+            </View>
             {presetButtons && (
               <View style={mergedStyles.buttonContainer}>
                 <Button
@@ -397,10 +412,10 @@ const DateRangePicker = ({
           </View>
         </View>
       </View>
-      {node}
+      {/* {node} */}
     </>
   ) : (
-    <>{node}</>
+    <>{null}</>
   );
 };
 
@@ -502,5 +517,34 @@ const styles = StyleSheet.create({
   monthButtons: {
     width: 32,
     height: 32,
+  },
+  buttonWrapper: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+    paddingRight: 10,
+    marginBottom: 8,
+  },
+  cancel: {
+    width: "47%",
+    backgroundColor: "#EEEEEE",
+    borderRadius: 7,
+    borderWidth: 0,
+  },
+  confirm: {
+    width: "47%",
+    backgroundColor: "#FF9F0A",
+    borderRadius: 7,
+    borderWidth: 0,
+  },
+  cancelText:{ 
+    color: "#999999", 
+    fontWeight: "500", 
+    fontSize: 14 
+  },
+  confirmText:{ 
+    color: "#FFFFFF", 
+    fontWeight: "500", 
+    fontSize: 14 
   },
 });
