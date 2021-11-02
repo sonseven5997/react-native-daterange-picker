@@ -127,7 +127,7 @@ const DateRangePicker = ({
     return (
       (_startDate &&
         _endDate &&
-        _date.isBetween(_startDate, _endDate, null, "[]")) ||
+        _date.isBetween(_startDate, _endDate, "date", "[]")) ||
       (_startDate && _date.isSame(_startDate, "day")) ||
       (__date && _date.isSame(__date, "day"))
     );
