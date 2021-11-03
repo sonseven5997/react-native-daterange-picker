@@ -42,13 +42,12 @@ const DateRangePicker = ({
   headerStyle,
   monthPrevButton,
   monthNextButton,
-  children,
   buttonContainerStyle,
   buttonStyle,
   buttonTextStyle,
   presetButtons,
   open,
-  confirm,
+  onConfirm,
   cancel,
   confirmText,
   cancelText,
@@ -87,14 +86,6 @@ const DateRangePicker = ({
       ...styles.monthButtons,
       ...monthButtonsStyle,
     },
-  };
-
-  const _onOpen = () => {
-    if (typeof open !== "boolean") onOpen();
-  };
-
-  const _onClose = () => {
-    if (typeof open !== "boolean") onClose();
   };
 
   const onOpen = () => {
@@ -314,20 +305,6 @@ const DateRangePicker = ({
     select,
   ]);
 
-  const node = (
-    <View>
-      <TouchableWithoutFeedback onPress={_onOpen}>
-        {children ? (
-          children
-        ) : (
-          <View>
-            <Text>Click me to show date picker</Text>
-          </View>
-        )}
-      </TouchableWithoutFeedback>
-    </View>
-  );
-
   return isOpen ? (
     <>
       <View style={mergedStyles.backdrop} >
@@ -371,13 +348,15 @@ const DateRangePicker = ({
               {weeks}
             </View>
             <View style={styles.buttonWrapper}>
-              <Button 
-                children={cancelText ?? "Cancel"} 
-                onPress={cancel} buttonStyle={styles.cancel} 
+              <Button
+                children={cancelText ?? "Cancel"}
+                onPress={cancel} buttonStyle={styles.cancel}
                 buttonTextStyle={styles.cancelText} />
-              <Button 
-                children={confirmText ?? "Confirm"} 
-                onPress={confirm} buttonStyle={styles.confirm} 
+              <Button
+                children={confirmText ?? "Confirm"}
+                onPress={() => {
+                  onConfirm(startDate, endDate)
+                }} buttonStyle={styles.confirm}
                 buttonTextStyle={styles.confirmText} />
             </View>
             {presetButtons && (
@@ -412,7 +391,6 @@ const DateRangePicker = ({
           </View>
         </View>
       </View>
-      {/* {node} */}
     </>
   ) : (
     <>{null}</>
@@ -537,14 +515,14 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     borderWidth: 0,
   },
-  cancelText:{ 
-    color: "#999999", 
-    fontWeight: "500", 
-    fontSize: 14 
+  cancelText: {
+    color: "#999999",
+    fontWeight: "500",
+    fontSize: 14
   },
-  confirmText:{ 
-    color: "#FFFFFF", 
-    fontWeight: "500", 
-    fontSize: 14 
+  confirmText: {
+    color: "#FFFFFF",
+    fontWeight: "500",
+    fontSize: 14
   },
 });
