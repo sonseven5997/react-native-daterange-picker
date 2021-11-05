@@ -42,13 +42,14 @@ const DateRangePicker = ({
   headerStyle,
   monthPrevButton,
   monthNextButton,
+  children,
   buttonContainerStyle,
   buttonStyle,
   buttonTextStyle,
   presetButtons,
   open,
   onConfirm,
-  cancel,
+  onCancel,
   confirmText,
   cancelText,
 }) => {
@@ -86,6 +87,14 @@ const DateRangePicker = ({
       ...styles.monthButtons,
       ...monthButtonsStyle,
     },
+  };
+
+  const _onOpen = () => {
+    if (typeof open !== "boolean") onOpen();
+  };
+
+  const _onClose = () => {
+    if (typeof open !== "boolean") onClose();
   };
 
   const onOpen = () => {
@@ -183,14 +192,15 @@ const DateRangePicker = ({
             onChange({ startDate: _date });
           } else {
             setSelecting(!selecting);
-            onChange({ endDate: _date });
+            onChange({startDate ,endDate: _date });
+            onCancel()
           }
         } else {
           setSelecting(!selecting);
           onChange({
             date: null,
-            endDate: null,
             startDate: _date,
+            endDate: null,
           });
         }
       } else {
@@ -199,6 +209,7 @@ const DateRangePicker = ({
           startDate: null,
           endDate: null,
         });
+        onCancel()
       }
     },
     [_moment, displayedDate, onChange, range, selecting, startDate]
@@ -310,7 +321,7 @@ const DateRangePicker = ({
       <View style={mergedStyles.backdrop} >
         <TouchableWithoutFeedback
           style={styles.closeTrigger}
-          onPress={cancel}
+          onPress={onCancel}
         >
           <View style={styles.closeContainer} />
         </TouchableWithoutFeedback>
@@ -346,18 +357,6 @@ const DateRangePicker = ({
                 <View style={styles.dayHeaderContainer}>{dayHeaders}</View>
               )}
               {weeks}
-            </View>
-            <View style={styles.buttonWrapper}>
-              <Button
-                children={cancelText ?? "Cancel"}
-                onPress={cancel} buttonStyle={styles.cancel}
-                buttonTextStyle={styles.cancelText} />
-              <Button
-                children={confirmText ?? "Confirm"}
-                onPress={() => {
-                  onConfirm(startDate, endDate)
-                }} buttonStyle={styles.confirm}
-                buttonTextStyle={styles.confirmText} />
             </View>
             {presetButtons && (
               <View style={mergedStyles.buttonContainer}>
