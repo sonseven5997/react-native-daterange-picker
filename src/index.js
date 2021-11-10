@@ -42,7 +42,6 @@ const DateRangePicker = ({
   headerStyle,
   monthPrevButton,
   monthNextButton,
-  children,
   buttonContainerStyle,
   buttonStyle,
   buttonTextStyle,
@@ -50,8 +49,6 @@ const DateRangePicker = ({
   open,
   onConfirm,
   onCancel,
-  confirmText,
-  cancelText,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [weeks, setWeeks] = useState([]);
@@ -193,7 +190,6 @@ const DateRangePicker = ({
           } else {
             setSelecting(!selecting);
             onChange({startDate ,endDate: _date });
-            onCancel()
           }
         } else {
           setSelecting(!selecting);
@@ -209,7 +205,6 @@ const DateRangePicker = ({
           startDate: null,
           endDate: null,
         });
-        onCancel()
       }
     },
     [_moment, displayedDate, onChange, range, selecting, startDate]
