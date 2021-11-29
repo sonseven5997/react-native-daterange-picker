@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedback,
   View,
   Image,
-  Pressable
 } from "react-native";
 import Button from "./components/Button";
 import Day from "./components/Day";
@@ -42,13 +41,12 @@ const DateRangePicker = ({
   headerStyle,
   monthPrevButton,
   monthNextButton,
+  children,
   buttonContainerStyle,
   buttonStyle,
   buttonTextStyle,
   presetButtons,
   open,
-  onConfirm,
-  onCancel,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [weeks, setWeeks] = useState([]);
@@ -124,7 +122,7 @@ const DateRangePicker = ({
     return (
       (_startDate &&
         _endDate &&
-        _date.isBetween(_startDate, _endDate, "date", "[]")) ||
+        _date.isBetween(_startDate, _endDate, null, "[]")) ||
       (_startDate && _date.isSame(_startDate, "day")) ||
       (__date && _date.isSame(__date, "day"))
     );
@@ -189,14 +187,14 @@ const DateRangePicker = ({
             onChange({ startDate: _date });
           } else {
             setSelecting(!selecting);
-            onChange({startDate ,endDate: _date });
+            onChange({ endDate: _date });
           }
         } else {
           setSelecting(!selecting);
           onChange({
             date: null,
-            startDate: _date,
             endDate: null,
+            startDate: _date,
           });
         }
       } else {
@@ -221,7 +219,7 @@ const DateRangePicker = ({
     function populateHeaders() {
       let _dayHeaders = [];
       for (let i = 0; i <= 6; ++i) {
-        let day = _moment(displayedDate).weekday(i).format("dd - DD/MM/YYYY").substr(0, 2);
+        let day = _moment(displayedDate).weekday(i).format("dddd").substr(0, 2);
         _dayHeaders.push(
           <Header
             key={`dayHeader-${i}`}
@@ -256,7 +254,7 @@ const DateRangePicker = ({
             selectedStyle={selectedStyle}
             selectedTextStyle={selectedTextStyle}
             disabledStyle={disabledStyle}
-            dayStyle={dayStyle}
+            dayStyle={_date.format("YYYY/MM/DD") === _moment().format("YYYY/MM/DD") ? { ...styles.today, ...dayStyle } : dayStyle}
             dayTextStyle={dayTextStyle}
             disabledTextStyle={disabledTextStyle}
             index={i}
@@ -311,12 +309,26 @@ const DateRangePicker = ({
     select,
   ]);
 
+  const node = (
+    <View>
+      <TouchableWithoutFeedback onPress={_onOpen}>
+        {children ? (
+          children
+        ) : (
+          <View>
+            <Text>Click me to show date picker</Text>
+          </View>
+        )}
+      </TouchableWithoutFeedback>
+    </View>
+  );
+
   return isOpen ? (
     <>
-      <View style={mergedStyles.backdrop} >
+      <View style={mergedStyles.backdrop}>
         <TouchableWithoutFeedback
           style={styles.closeTrigger}
-          onPress={onCancel}
+          onPress={_onClose}
         >
           <View style={styles.closeContainer} />
         </TouchableWithoutFeedback>
@@ -385,9 +397,10 @@ const DateRangePicker = ({
           </View>
         </View>
       </View>
+      {node}
     </>
   ) : (
-    <>{null}</>
+    <>{node}</>
   );
 };
 
@@ -490,33 +503,11 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
   },
-  buttonWrapper: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "space-between",
-    paddingRight: 10,
-    marginBottom: 8,
-  },
-  cancel: {
-    width: "47%",
-    backgroundColor: "#EEEEEE",
-    borderRadius: 7,
-    borderWidth: 0,
-  },
-  confirm: {
-    width: "47%",
-    backgroundColor: "#FF9F0A",
-    borderRadius: 7,
-    borderWidth: 0,
-  },
-  cancelText: {
-    color: "#999999",
-    fontWeight: "500",
-    fontSize: 14
-  },
-  confirmText: {
-    color: "#FFFFFF",
-    fontWeight: "500",
-    fontSize: 14
-  },
+  today: {
+    borderWidth: 2,
+    borderColor: "#CCCCCC",
+    backgroundColor: "white",
+    borderRadius: 8,
+    height: "80%",
+  }
 });
