@@ -41,12 +41,12 @@ const DateRangePicker = ({
   headerStyle,
   monthPrevButton,
   monthNextButton,
-  children,
   buttonContainerStyle,
   buttonStyle,
   buttonTextStyle,
   presetButtons,
   open,
+  onCancel,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [weeks, setWeeks] = useState([]);
@@ -122,7 +122,7 @@ const DateRangePicker = ({
     return (
       (_startDate &&
         _endDate &&
-        _date.isBetween(_startDate, _endDate, null, "[]")) ||
+        _date.isBetween(_startDate, _endDate, "date", "[]")) ||
       (_startDate && _date.isSame(_startDate, "day")) ||
       (__date && _date.isSame(__date, "day"))
     );
@@ -187,14 +187,14 @@ const DateRangePicker = ({
             onChange({ startDate: _date });
           } else {
             setSelecting(!selecting);
-            onChange({ endDate: _date });
+            onChange({ startDate, endDate: _date });
           }
         } else {
           setSelecting(!selecting);
           onChange({
             date: null,
-            endDate: null,
             startDate: _date,
+            endDate: null,
           });
         }
       } else {
@@ -219,7 +219,7 @@ const DateRangePicker = ({
     function populateHeaders() {
       let _dayHeaders = [];
       for (let i = 0; i <= 6; ++i) {
-        let day = _moment(displayedDate).weekday(i).format("dddd").substr(0, 2);
+        let day = _moment(displayedDate).weekday(i).format("dd - DD/MM/YYYY").substr(0, 2);
         _dayHeaders.push(
           <Header
             key={`dayHeader-${i}`}
@@ -309,26 +309,12 @@ const DateRangePicker = ({
     select,
   ]);
 
-  const node = (
-    <View>
-      <TouchableWithoutFeedback onPress={_onOpen}>
-        {children ? (
-          children
-        ) : (
-          <View>
-            <Text>Click me to show date picker</Text>
-          </View>
-        )}
-      </TouchableWithoutFeedback>
-    </View>
-  );
-
   return isOpen ? (
     <>
-      <View style={mergedStyles.backdrop}>
+      <View style={mergedStyles.backdrop} >
         <TouchableWithoutFeedback
           style={styles.closeTrigger}
-          onPress={_onClose}
+          onPress={onCancel}
         >
           <View style={styles.closeContainer} />
         </TouchableWithoutFeedback>
@@ -397,10 +383,9 @@ const DateRangePicker = ({
           </View>
         </View>
       </View>
-      {node}
     </>
   ) : (
-    <>{node}</>
+    <>{null}</>
   );
 };
 
@@ -411,7 +396,7 @@ DateRangePicker.defaultProps = {
   range: false,
   buttons: false,
   presetButtons: false,
-};
+}; 
 
 DateRangePicker.propTypes = {
   onChange: PropTypes.func.isRequired,
